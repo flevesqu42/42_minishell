@@ -6,7 +6,7 @@
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/23 09:58:57 by flevesqu          #+#    #+#             */
-/*   Updated: 2016/12/12 04:39:19 by flevesqu         ###   ########.fr       */
+/*   Updated: 2016/12/15 09:42:00 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,16 @@ void	get_prompt(t_sh *sh)
 	ft_putstr_fd(sh->prompt, 2);
 }
 
+void	signal_handler(int i)
+{
+	if (i == 2)
+		ft_putchar_fd('\n', 0);
+}
+
 void	init_shell(t_sh *sh, char **env)
 {
-	char	*shlvl;
-	char	buf[11];
+	char			*shlvl;
+	char			buf[11];
 
 	sh->flags = 0;
 	sh->env = NULL;
@@ -45,16 +51,32 @@ void	init_shell(t_sh *sh, char **env)
 			: ft_atoi(shlvl) + 1, buf));
 	else
 		push_to_env(&sh->env, "SHLVL", "1");
+	signal(SIGINT, signal_handler);
+	if (tgetent(NULL, "xterm-256color") <= 0)
+		sh_error(GETATTR_ERROR, "internal", sh->name);
+	if (tcgetattr(0, &sh->old_terms) < 0)
+		sh_error(GETATTR_ERROR, "internal", sh->name);
+	sh->my_terms = sh->old_terms;
+	sh->my_terms.c_lflag &= ~(ICANON | ECHO);
+	sh->my_terms.c_cc[VMIN] = 1;
+	sh->my_terms.c_cc[VTIME] = 0;
+	if (tcsetattr(0, TCSANOW, &sh->my_terms) < 0)
+		sh_error(SETATTR_ERROR, "internal", sh->name);
 }
 
 void	sh_error(int err, char *command, char *sh)
 {
-	if (err == READ_ERROR || err == MALLOC_ERROR)
+	if (err == READ_ERROR || err == MALLOC_ERROR || err == GETATTR_ERROR
+			|| err == SETATTR_ERROR)
 	{
 		if (err == READ_ERROR)
 			ft_putstr_fd("minishell: can't read standard input\n", 2);
 		else if (err == MALLOC_ERROR)
 			ft_putstr_fd("minishell: memory allocation failed\n", 2);
+		else if (err == GETATTR_ERROR)
+			ft_putstr_fd("minishell: cannot get termcaps attributes\n", 2);
+		else if (err == SETATTR_ERROR)
+			ft_putstr_fd("minishell: cannot set termcaps attributes\n", 2);
 		exit(1);
 	}
 	else
@@ -84,29 +106,64 @@ void	sh_error(int err, char *command, char *sh)
 	}
 }
 
-void	do_nothing(int i)
+int		check_termcaps(t_sh *sh, char *buf, char *cmd)
 {
-	ft_putchar_fd('\n', 2);
-	(void)i;
+	int				ret;
+
+	ret = 0;
+	if (*buf == 4 && (ret = 1))
+		*cmd ? ft_putchar(7) : exit_shell(sh);
+	if (*buf == 12 && (ret = 1))
+	{
+		tputs(tgetstr("cl", NULL), 0, ft_putchar);
+		get_prompt(sh);
+		ft_putstr(cmd);
+	}
+	if (*buf == 127 && (ret = 1))
+	{
+		ft_putchar(127);
+	}
+	return (ret);
+}
+
+void	line_edit(t_sh *sh, char *cmd)
+{
+	char			buf[8];
+	int				ret;
+
+	*buf = '\0';
+	*cmd = '\0';
+	while (*buf != '\n' || (sh->flags & QUOTES))
+	{
+		if ((ret = read(0, buf, 8)) < 0)
+			sh_error(READ_ERROR, "internal", sh->name);
+		buf[ret] = '\0';
+		if (*buf == '\'' && !(sh->flags & DOUBLE_QUOTE))
+			sh->flags ^= SIMPLE_QUOTE;
+		else if (*buf == '\"' && !(sh->flags & SIMPLE_QUOTE))
+			sh->flags ^= DOUBLE_QUOTE;
+		if (!check_termcaps(sh, buf, cmd))
+		{
+			ft_strcat(cmd, buf);
+			ft_putstr(buf);
+			if (*buf == '\n' && (sh->flags & QUOTES))
+				ft_putstr_fd("\e[31m/ \e[0m", 0);
+		}
+	}
 }
 
 void	shell_loop(t_sh *sh)
 {
-	char	cmd[2049];
-	int		ret;
+	char			cmd[2048];
 
-	signal(SIGINT, do_nothing);
 	while (42)
 	{
-		ret = 0;
 		get_prompt(sh);
-		if ((ret = read(0, cmd, 1024)) < 0)
-			continue ;
-		else if (!ret)
-			exit_shell();
-		else if (ret == 1)
-			continue ;
-		cmd[ret - 1] = '\0';
+		if (tcsetattr(0, TCSANOW, &sh->my_terms) < 0)
+			sh_error(SETATTR_ERROR, "internal", sh->name);
+		line_edit(sh, cmd);
+		if (tcsetattr(0, TCSANOW, &sh->old_terms) < 0)
+			sh_error(SETATTR_ERROR, "internal", sh->name);
 		treat_line(sh, cmd);
 	}
 }

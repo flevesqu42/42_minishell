@@ -6,7 +6,7 @@
 #    By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/01/22 00:33:10 by flevesqu          #+#    #+#              #
-#    Updated: 2016/12/12 04:39:12 by flevesqu         ###   ########.fr        #
+#    Updated: 2016/12/15 07:53:23 by flevesqu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,11 +21,11 @@ FILES =	main.c\
 		exec.c\
 		builtins.c
 
-CC = gcc
+CC = clang
 
 WFLAGS = -Wall -Werror -Wextra -O3 -march=native -ffast-math
 
-LFLAGS = -L $(LIB)/ -lft -lm
+LFLAGS = -L $(LIB)/ -lft -lm  -ltermcap
 
 LIB_INCLUDES = ./$(LIB)/includes/
 

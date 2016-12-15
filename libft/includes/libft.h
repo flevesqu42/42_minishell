@@ -6,7 +6,7 @@
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/23 19:14:38 by flevesqu          #+#    #+#             */
-/*   Updated: 2016/12/06 01:10:21 by flevesqu         ###   ########.fr       */
+/*   Updated: 2016/12/14 17:01:09 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ char			*ft_strtrim(const char *s1);
 char			**ft_strsplit(const char *s, char c);
 char			*ft_itoa(int n);
 char			*ft_utoasub(size_t nb, char *buf);
-void			ft_putchar(int c);
+int				ft_putchar(int c);
 void			ft_putstr(const char *s);
 void			ft_putendl(const char *s);
 void			ft_putnbr(int n);

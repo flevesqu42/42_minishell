@@ -6,14 +6,38 @@
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/05 22:52:26 by flevesqu          #+#    #+#             */
-/*   Updated: 2016/12/12 04:39:30 by flevesqu         ###   ########.fr       */
+/*   Updated: 2016/12/15 07:53:36 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	exit_shell(void)
+int		is_a_builtin(t_sh *sh, char **cmd)
 {
+	int		ret;
+
+	ret = 0;
+	if (!ft_strcmp(*cmd, "exit") && (ret = 1))
+		exit_shell(sh);
+	else if (!ft_strcmp(*cmd, "env") && (ret = 1))
+		env_built(sh, cmd);
+	else if (!ft_strcmp(*cmd, "setenv") && (ret = 1))
+		set_env_built(sh, cmd);
+	else if (!ft_strcmp(*cmd, "unsetenv") && (ret = 1))
+		unset_env_built(sh, &cmd[1]);
+	else if (!ft_strcmp(*cmd, "getenv") && (ret = 1))
+		ft_putendl(ft_getenv(sh->env, cmd[1]));
+	else if (!ft_strcmp(*cmd, "echo") && (ret = 1))
+		echo_built(&cmd[1]);
+	else if (!ft_strcmp(*cmd, "cd") && (ret = 1))
+		change_directory(sh, cmd[1]);
+	return (ret);
+}
+
+void	exit_shell(t_sh *sh)
+{
+	if (tcsetattr(0, TCSANOW, &sh->old_terms) < 0)
+		sh_error(SETATTR_ERROR, "internal", "minishell");
 	ft_putstr_fd("exit\n", 0);
 	exit(0);
 }

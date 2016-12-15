@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_putchar.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flevesqu <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/27 06:42:25 by flevesqu          #+#    #+#             */
-/*   Updated: 2016/02/19 15:16:55 by flevesqu         ###   ########.fr       */
+/*   Updated: 2016/12/14 17:03:12 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static void	ft_putchar_bis(char c)
 	write(1, &c, 1);
 }
 
-void		ft_putchar(int i)
+int			ft_putchar(int i)
 {
 	if (i < 0x80)
 		write(1, &i, 1);
@@ -26,12 +26,14 @@ void		ft_putchar(int i)
 	{
 		ft_putchar_bis(i >> 6 | 0xC0);
 		ft_putchar_bis((i & 0xBF) | 0x80);
+		return (2);
 	}
 	else if (i < 0x10000)
 	{
 		ft_putchar_bis(i >> 12 | 0xE0);
 		ft_putchar_bis(((i >> 6) & 0xBF) | 0x80);
 		ft_putchar_bis((i & 0xBF) | 0x80);
+		return (3);
 	}
 	else
 	{
@@ -39,5 +41,7 @@ void		ft_putchar(int i)
 		ft_putchar_bis(((i >> 12) & 0xBF) | 0x80);
 		ft_putchar_bis(((i >> 6) & 0xBF) | 0x80);
 		ft_putchar_bis((i & 0xBF) | 0x80);
+		return (4);
 	}
+	return (1);
 }

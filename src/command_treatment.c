@@ -6,68 +6,52 @@
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/05 21:16:25 by flevesqu          #+#    #+#             */
-/*   Updated: 2016/12/12 10:37:22 by flevesqu         ###   ########.fr       */
+/*   Updated: 2016/12/15 07:53:35 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int		is_a_builtin(t_sh *sh, char **cmd)
-{
-	int		ret;
-
-	ret = 0;
-	if (!ft_strcmp(*cmd, "exit") && (ret = 1))
-		exit_shell();
-	else if (!ft_strcmp(*cmd, "env") && (ret = 1))
-		env_built(sh, cmd);
-	else if (!ft_strcmp(*cmd, "setenv") && (ret = 1))
-		set_env_built(sh, cmd);
-	else if (!ft_strcmp(*cmd, "unsetenv") && (ret = 1))
-		unset_env_built(sh, &cmd[1]);
-	else if (!ft_strcmp(*cmd, "getenv") && (ret = 1))
-		ft_putendl(ft_getenv(sh->env, cmd[1]));
-	else if (!ft_strcmp(*cmd, "echo") && (ret = 1))
-		echo_built(&cmd[1]);
-	else if (!ft_strcmp(*cmd, "cd") && (ret = 1))
-		change_directory(sh, cmd[1]);
-	return (ret);
-}
-
 void	check_variable(t_sh *sh, char **line)
 {
 	size_t	index;
-	int		flag;
+	char	save;
 	char	*env;
 
 	index = 1;
-	while ((*line)[index] && !ft_isspace((*line)[index]))
+	while (ft_isalnum((*line)[index]) || (*line)[index] == '_')
 		++index;
-	flag = (*line)[index] ? 1 : 0;
+	save = (*line)[index];
 	(*line)[index] = '\0';
 	if ((env = ft_getenv(sh->env, (*line + 1))))
 	{
-		if (flag)
-			(*line)[index] = ' ';
+		(*line)[index] = save;
 		ft_memmove(*line + index + ft_strlen(env), *line + index
 			, ft_strlen(*line + index) + 1);
 		ft_memmove(*line + index, env, ft_strlen(env));
 		ft_memmove(*line, *line + index, ft_strlen(*line + index) + 1);
+		*line += ft_strlen(env) - 1;
 	}
 	else
 	{
-		if (flag)
-			(*line)[index] = ' ';
+		(*line)[index] = save;
 		ft_memmove(*line, *line + index, ft_strlen(*line + index) + 1);
+		*line -= 1;
 	}
-	*line += index;
 }
 
-int		parse_line(char **line, char **cmd, size_t *index, t_sh *sh)
+int		check_specials_chars(char **line, char **cmd, size_t *index, t_sh *sh)
 {
 	if (**line == '\\')
 		ft_memmove(*line, &(*line)[1], ft_strlen(&(*line)[1]) + 1);
-	else if (**line == ';')
+	else if (**line == '$' && *(*line + 1))
+	{
+		check_variable(sh, line);
+		if (!*cmd[*index - 1] || *cmd[*index - 1] == ';'
+				|| (ft_isspace(*cmd[*index - 1]) && !(sh->flags & QUOTES)))
+			--*index;
+	}
+	else if (!(sh->flags & QUOTES) && **line == ';')
 	{
 		**line = '\0';
 		cmd[*index] = NULL;
@@ -76,12 +60,38 @@ int		parse_line(char **line, char **cmd, size_t *index, t_sh *sh)
 		*line += 1;
 		return (1);
 	}
-	else if (**line == '$')
-		check_variable(sh, line);
 	*line += 1;
 	return (0);
 }
 
+int		parse_chars(char **line, char **cmd, size_t *index, t_sh *sh)
+{
+	if (**line == '\"' && !(sh->flags & SIMPLE_QUOTE))
+	{
+		sh->flags ^= DOUBLE_QUOTE;
+		ft_memmove(*line, &(*line)[1], ft_strlen(&(*line)[1]) + 1);
+	}
+	else if (**line == '\'' && !(sh->flags & DOUBLE_QUOTE))
+	{
+		sh->flags ^= SIMPLE_QUOTE;
+		ft_memmove(*line, &(*line)[1], ft_strlen(&(*line)[1]) + 1);
+	}
+	else if (!(sh->flags & SIMPLE_QUOTE))
+		return (check_specials_chars(line, cmd, index, sh));
+	else
+		*line += 1;
+	return (0);
+}
+
+
+void erase_spaces(char **line)
+{
+	while (ft_isspace(**line))
+	{
+		**line = '\0';
+		*line += 1;
+	}
+}
 void	split_line(char **cmd, char *line, t_sh *sh)
 {
 	size_t	index;
@@ -90,20 +100,17 @@ void	split_line(char **cmd, char *line, t_sh *sh)
 	index = 0;
 	while (*line)
 	{
-		while (ft_isspace(*line))
-		{
-			*line = '\0';
-			line += 1;
-		}
+		if (!(sh->flags & QUOTES))
+			erase_spaces(&line);
 		if (*line)
 		{
-			if (*line != ';')
+			if (*line != ';' || (sh->flags & QUOTES))
 			{
 				cmd[index] = line;
 				index += 1;
 			}
-			while (*line && !ft_isspace(*line))
-				if ((ret = parse_line(&line, cmd, &index, sh)))
+			while (*line && (!ft_isspace(*line) || (sh->flags & QUOTES)))
+				if ((ret = parse_chars(&line, cmd, &index, sh)))
 				{
 					if (ret < 0)
 						return ;
@@ -119,10 +126,12 @@ void	treat_line(t_sh *sh, char *line)
 	char	*cmd[ARG_MAX];
 
 	cmd[0] = NULL;
+	sh->flags = 0;
 	split_line(cmd, line, sh);
 	if (!*cmd)
 		return ;
 	treat_command(sh, cmd);
+	sh->flags = 0;
 }
 
 void	treat_command(t_sh *sh, char **cmd)

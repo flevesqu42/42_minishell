@@ -6,14 +6,14 @@
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/25 05:50:34 by flevesqu          #+#    #+#             */
-/*   Updated: 2016/11/25 05:52:24 by flevesqu         ###   ########.fr       */
+/*   Updated: 2016/12/15 08:53:25 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "libft.h"
+#include "libft.h"
 
 int		ft_isspace(int c)
 {
 	return (c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r'
-        || c == ' ');
+		|| c == ' ');
 }

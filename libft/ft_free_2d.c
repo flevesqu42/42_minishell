@@ -6,7 +6,7 @@
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/06 01:07:03 by flevesqu          #+#    #+#             */
-/*   Updated: 2016/12/06 01:13:52 by flevesqu         ###   ########.fr       */
+/*   Updated: 2016/12/15 08:52:16 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	ft_free_2d(char ***tab)
 {
-	size_t  index;
+	size_t	index;
 
 	index = 0;
 	if (!(*tab))
