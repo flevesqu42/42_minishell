@@ -6,7 +6,7 @@
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/23 09:58:57 by flevesqu          #+#    #+#             */
-/*   Updated: 2016/12/15 09:42:00 by flevesqu         ###   ########.fr       */
+/*   Updated: 2016/12/16 10:45:05 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,17 +51,18 @@ void	init_shell(t_sh *sh, char **env)
 			: ft_atoi(shlvl) + 1, buf));
 	else
 		push_to_env(&sh->env, "SHLVL", "1");
+	signal(SIGQUIT, signal_handler);
 	signal(SIGINT, signal_handler);
-	if (tgetent(NULL, "xterm-256color") <= 0)
-		sh_error(GETATTR_ERROR, "internal", sh->name);
+	if (tgetent(NULL, ft_getenv(sh->env, "TERM")) <= 0)
+		if (tgetent(NULL, "xterm-256color") <= 0)
+			sh_error(GETATTR_ERROR, "internal", sh->name);
 	if (tcgetattr(0, &sh->old_terms) < 0)
 		sh_error(GETATTR_ERROR, "internal", sh->name);
 	sh->my_terms = sh->old_terms;
 	sh->my_terms.c_lflag &= ~(ICANON | ECHO);
 	sh->my_terms.c_cc[VMIN] = 1;
 	sh->my_terms.c_cc[VTIME] = 0;
-	if (tcsetattr(0, TCSANOW, &sh->my_terms) < 0)
-		sh_error(SETATTR_ERROR, "internal", sh->name);
+	sh->my_terms.c_cc[VINTR] = 0;
 }
 
 void	sh_error(int err, char *command, char *sh)
@@ -106,45 +107,77 @@ void	sh_error(int err, char *command, char *sh)
 	}
 }
 
-int		check_termcaps(t_sh *sh, char *buf, char *cmd)
+int		check_termcaps(t_sh *sh, char *buf, char *cmd, size_t *index)
 {
-	int				ret;
+	int		ret;
 
 	ret = 0;
 	if (*buf == 4 && (ret = 1))
-		*cmd ? ft_putchar(7) : exit_shell(sh);
-	if (*buf == 12 && (ret = 1))
+		*cmd ? ft_putchar_fd(7, 0) : exit_shell(sh);
+	else if (*buf == 12 && (ret = 1))
 	{
+		ft_putchar_fd('\n', 0);
 		tputs(tgetstr("cl", NULL), 0, ft_putchar);
 		get_prompt(sh);
-		ft_putstr(cmd);
+		ft_putstr_fd(cmd, 0);
 	}
-	if (*buf == 127 && (ret = 1))
+	else if (*buf == 3 && (ret = 1))
 	{
-		ft_putchar(127);
+		ft_putchar_fd('\n', 0);
+		*cmd = '\0';
+	}
+	else if (*buf == 127 && (ret = 1) && *cmd)
+	{
+		ft_putstr_fd(tgetstr("le", NULL), 0);
+		ft_putstr_fd(tgetstr("dc", NULL), 0);
+		cmd[*index - 1] = '\0';
+		*index -= 1;
+	}
+	else if (buf[0] == 27 && buf[1] == 91 && buf[2] == 68 && !buf[3]
+			&& (ret = 1) && *index)
+	{
+		ft_putstr_fd(tgetstr("le", NULL), 0);
+		*index -= 1;
+	}
+	else if (buf[0] == 27 && buf[1] == 91 && buf[2] == 67 && !buf[3]
+			&& (ret = 1) && buf[*index])
+	{
+		ft_putstr_fd(tgetstr("nd", NULL), 0);
+		*index += 1;
 	}
 	return (ret);
+}
+
+void	push_str(char *dst, char *src, size_t *index)
+{
+	ft_memmove(dst + *index + ft_strlen(src), dst + *index
+		, ft_strlen(dst + *index) + 1);
+	ft_memmove(dst + *index, src, ft_strlen(src));
+	*index += ft_strlen(src);
 }
 
 void	line_edit(t_sh *sh, char *cmd)
 {
 	char			buf[8];
 	int				ret;
+	size_t			index;
 
 	*buf = '\0';
 	*cmd = '\0';
-	while (*buf != '\n' || (sh->flags & QUOTES))
+	index = 0;
+	while (*buf != 3 && (*buf != '\n' || (sh->flags & QUOTES)))
 	{
+		*buf == '\\' ? (sh->flags ^= BACKSLASH) : (sh->flags &= ~(BACKSLASH));
 		if ((ret = read(0, buf, 8)) < 0)
 			sh_error(READ_ERROR, "internal", sh->name);
 		buf[ret] = '\0';
-		if (*buf == '\'' && !(sh->flags & DOUBLE_QUOTE))
+		if (*buf == '\'' && !(sh->flags & (DOUBLE_QUOTE)))
 			sh->flags ^= SIMPLE_QUOTE;
-		else if (*buf == '\"' && !(sh->flags & SIMPLE_QUOTE))
+		else if (*buf == '\"' && !(sh->flags & (SIMPLE_QUOTE | BACKSLASH)))
 			sh->flags ^= DOUBLE_QUOTE;
-		if (!check_termcaps(sh, buf, cmd))
+		if (!check_termcaps(sh, buf, cmd, &index))
 		{
-			ft_strcat(cmd, buf);
+			push_str(cmd, buf, &index);
 			ft_putstr(buf);
 			if (*buf == '\n' && (sh->flags & QUOTES))
 				ft_putstr_fd("\e[31m/ \e[0m", 0);

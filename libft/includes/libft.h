@@ -6,7 +6,7 @@
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/23 19:14:38 by flevesqu          #+#    #+#             */
-/*   Updated: 2016/12/14 17:01:09 by flevesqu         ###   ########.fr       */
+/*   Updated: 2016/12/16 07:10:37 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,9 @@ char			*ft_strrchr(const char *s, int c);
 char			*ft_ifstrrchr(char *s, int c);
 char			*ft_strstr(const char *s1, const char *s2);
 char			*ft_strnstr(const char *s1, const char *s2, size_t n);
-int				ft_strcmp(const char *s1, const char *s2);
 int				ft_strncmp(const char *s1, const char *s2, size_t n);
+int				ft_strcmp(const char *s1, const char *s2);
+int				ft_strcmp_nocase(const char *s1, const char *s2);
 int				ft_atoi(const char *s1);
 int				ft_isalpha(int c);
 int				ft_isdigit(int c);

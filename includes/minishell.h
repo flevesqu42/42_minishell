@@ -6,7 +6,7 @@
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/23 09:57:45 by flevesqu          #+#    #+#             */
-/*   Updated: 2016/12/15 09:30:43 by flevesqu         ###   ########.fr       */
+/*   Updated: 2016/12/16 06:34:50 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,10 @@
 # define GETATTR_ERROR		13
 # define SETATTR_ERROR		14
 
-# define QUOTES				0x3
+# define QUOTES				0x7
 # define DOUBLE_QUOTE			0x1
 # define SIMPLE_QUOTE			0x2
-
-# define CTRL_C				0x1
+# define BACKSLASH				0x4
 
 typedef struct	s_sh
 {

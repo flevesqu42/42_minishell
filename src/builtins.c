@@ -6,7 +6,7 @@
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/05 22:52:26 by flevesqu          #+#    #+#             */
-/*   Updated: 2016/12/15 07:53:36 by flevesqu         ###   ########.fr       */
+/*   Updated: 2016/12/16 07:10:13 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,19 +17,19 @@ int		is_a_builtin(t_sh *sh, char **cmd)
 	int		ret;
 
 	ret = 0;
-	if (!ft_strcmp(*cmd, "exit") && (ret = 1))
+	if (!ft_strcmp_nocase(*cmd, "exit") && (ret = 1))
 		exit_shell(sh);
-	else if (!ft_strcmp(*cmd, "env") && (ret = 1))
+	else if (!ft_strcmp_nocase(*cmd, "env") && (ret = 1))
 		env_built(sh, cmd);
-	else if (!ft_strcmp(*cmd, "setenv") && (ret = 1))
+	else if (!ft_strcmp_nocase(*cmd, "setenv") && (ret = 1))
 		set_env_built(sh, cmd);
-	else if (!ft_strcmp(*cmd, "unsetenv") && (ret = 1))
+	else if (!ft_strcmp_nocase(*cmd, "unsetenv") && (ret = 1))
 		unset_env_built(sh, &cmd[1]);
-	else if (!ft_strcmp(*cmd, "getenv") && (ret = 1))
+	else if (!ft_strcmp_nocase(*cmd, "getenv") && (ret = 1))
 		ft_putendl(ft_getenv(sh->env, cmd[1]));
-	else if (!ft_strcmp(*cmd, "echo") && (ret = 1))
+	else if (!ft_strcmp_nocase(*cmd, "echo") && (ret = 1))
 		echo_built(&cmd[1]);
-	else if (!ft_strcmp(*cmd, "cd") && (ret = 1))
+	else if (!ft_strcmp_nocase(*cmd, "cd") && (ret = 1))
 		change_directory(sh, cmd[1]);
 	return (ret);
 }
@@ -137,9 +137,9 @@ void	change_directory(t_sh *sh, char *arg)
 {
 	struct stat infos;
 
-	if ((!arg || !ft_strcmp(arg, "--")) && !(arg = ft_getenv(sh->env, "HOME")))
+	if ((!arg || !ft_strcmp_nocase(arg, "--")) && !(arg = ft_getenv(sh->env, "HOME")))
 		sh_error(HOME_NOT_SET, "cd", sh->name);
-	else if (!ft_strcmp(arg, "-") && !(arg = ft_getenv(sh->env, "OLDPWD")))
+	else if (!ft_strcmp_nocase(arg, "-") && !(arg = ft_getenv(sh->env, "OLDPWD")))
 		ft_putendl_fd("cd: OLDPWD not set", 2);
 	else if (chdir(arg) < 0)
 	{

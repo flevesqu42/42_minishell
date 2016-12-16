@@ -6,27 +6,13 @@
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/05 22:59:57 by flevesqu          #+#    #+#             */
-/*   Updated: 2016/12/15 10:03:46 by flevesqu         ###   ########.fr       */
+/*   Updated: 2016/12/16 03:33:30 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	is_an_exec(t_sh *sh, char **cmd, char *path)
-{
-	struct stat	infos;
-
-	if (lstat(path, &infos) < 0)
-		sh_error(NO_FILE, *cmd, sh->name);
-	else if ((infos.st_mode & S_IFDIR))
-		sh_error(IS_A_DIRECTORY, *cmd, sh->name);
-	else if (!(infos.st_mode & S_IXUSR))
-		sh_error(NO_RIGHT, *cmd, sh->name);
-	else
-		execute_command(sh, cmd, path);
-}
-
-void display_sig_error(int stat, char *cmd, pid_t pid)
+void	display_sig_error(int stat, char *cmd, pid_t pid)
 {
 	ft_putstr_fd("[1]    ", 2);
 	ft_putnbr_fd(pid, 2);
@@ -34,6 +20,8 @@ void display_sig_error(int stat, char *cmd, pid_t pid)
 		ft_putstr_fd(" segmentation fault  ", 2);
 	else if (stat == SIGBUS)
 		ft_putstr_fd(" bus error  ", 2);
+	else if (stat == SIGQUIT)
+		ft_putstr_fd(" quit  ", 2);
 	ft_putstr_fd(cmd, 2);
 	ft_putstr_fd("\n", 2);
 }
@@ -42,7 +30,7 @@ void	check_signal(int stat, char *cmd, pid_t pid)
 {
 	int	tmp;
 
-	if ((tmp = WTERMSIG(stat)) == SIGSEGV || tmp == SIGBUS)
+	if ((tmp = WTERMSIG(stat)) == SIGSEGV || tmp == SIGBUS || tmp == SIGQUIT)
 		display_sig_error(stat, cmd, pid);
 }
 
@@ -66,22 +54,38 @@ void	execute_command(t_sh *sh, char **cmd, char *path)
 	}
 }
 
+void	is_an_exec(t_sh *sh, char **cmd, char *path)
+{
+	struct stat	infos;
+
+	if (lstat(path, &infos) < 0)
+		sh_error(NO_FILE, *cmd, sh->name);
+	else if ((infos.st_mode & S_IFDIR))
+		sh_error(IS_A_DIRECTORY, *cmd, sh->name);
+	else if (!(infos.st_mode & S_IXUSR))
+		sh_error(NO_RIGHT, *cmd, sh->name);
+	else
+		execute_command(sh, cmd, path);
+}
+
 int		check_in_directory(t_sh *sh, char **cmd, char *path)
 {
 	DIR				*dir;
 	struct dirent   *dirent;
 
+	ft_strcat(path, "/");
 	if (!(dir = opendir(path)))
 		return (0);
 	while ((dirent = readdir(dir)))
-		if (!ft_strcmp(*cmd, dirent->d_name))
+	{
+		if (!ft_strcmp_nocase(*cmd, dirent->d_name))
 		{
-			ft_strcat(path, "/");
 			ft_strcat(path, dirent->d_name);
 			is_an_exec(sh, cmd, path);
 			closedir(dir);
 			return (1);
 		}
+	}
 	closedir(dir);
 	return (0);
 }

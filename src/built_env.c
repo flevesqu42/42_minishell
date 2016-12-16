@@ -6,7 +6,7 @@
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/05 21:13:32 by flevesqu          #+#    #+#             */
-/*   Updated: 2016/12/15 07:53:38 by flevesqu         ###   ########.fr       */
+/*   Updated: 2016/12/16 07:10:13 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void		env_built_bis(t_sh *sh, char **cmd)
 
 	index[0] = 0;
 	while (cmd[index[0]] && *cmd[index[0]] == '-'
-			&& ft_strcmp(cmd[index[0]], "--"))
+			&& ft_strcmp_nocase(cmd[index[0]], "--"))
 	{
 		index[1] = 0;
 		if ((ret = env_built_options(sh, cmd, index)))
