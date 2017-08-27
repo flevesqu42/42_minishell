@@ -1,29 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_strrchr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/12/15 02:19:11 by flevesqu          #+#    #+#             */
-/*   Updated: 2017/08/24 09:15:15 by flevesqu         ###   ########.fr       */
+/*   Created: 2015/11/25 18:24:24 by flevesqu          #+#    #+#             */
+/*   Updated: 2017/08/24 03:48:02 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
-# include "libft.h"
-# include <unistd.h>
-# include <stdlib.h>
-# define BUFF_SIZE 4096
+#include "libft.h"
 
-typedef struct	s_gnl
+char	*ft_strrchr(const char *s, int c)
 {
-	char			*str;
-	int				fd;
-	struct s_gnl	*next;
-}				t_gnl;
+	size_t	len;
 
-int				get_next_line(const int fd, char **line);
-
-#endif
+	len = ft_strlen(s);
+	return (ft_memrchr(s, c, len + 1));
+}

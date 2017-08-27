@@ -1,29 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_strsub.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/12/15 02:19:11 by flevesqu          #+#    #+#             */
-/*   Updated: 2017/08/24 09:15:15 by flevesqu         ###   ########.fr       */
+/*   Created: 2015/11/26 23:56:42 by flevesqu          #+#    #+#             */
+/*   Updated: 2017/08/24 04:40:07 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
-# include "libft.h"
-# include <unistd.h>
-# include <stdlib.h>
-# define BUFF_SIZE 4096
+#include "libft.h"
+#include <stdlib.h>
 
-typedef struct	s_gnl
+char	*ft_strsub(const char *s, unsigned int start, size_t len)
 {
-	char			*str;
-	int				fd;
-	struct s_gnl	*next;
-}				t_gnl;
+	char	*sub;
+	char	*ptr;
 
-int				get_next_line(const int fd, char **line);
-
-#endif
+	if (!s || !(sub = (char*)malloc(sizeof(char) * (len + 1))))
+		return (NULL);
+	ptr = sub;
+	s += start;
+	while (len--)
+		*(ptr++) = *(s++);
+	*ptr = '\0';
+	return (sub);
+}

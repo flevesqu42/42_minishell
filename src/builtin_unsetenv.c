@@ -1,29 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   builtin_unsetenv.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/12/15 02:19:11 by flevesqu          #+#    #+#             */
-/*   Updated: 2017/08/24 09:15:15 by flevesqu         ###   ########.fr       */
+/*   Created: 2017/07/20 04:13:31 by flevesqu          #+#    #+#             */
+/*   Updated: 2017/07/20 04:13:36 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
-# include "libft.h"
-# include <unistd.h>
-# include <stdlib.h>
-# define BUFF_SIZE 4096
+#include "minishell.h"
 
-typedef struct	s_gnl
+void	builtin_unsetenv(t_sh *sh, char **cmd)
 {
-	char			*str;
-	int				fd;
-	struct s_gnl	*next;
-}				t_gnl;
+	size_t	index;
 
-int				get_next_line(const int fd, char **line);
-
-#endif
+	index = 0;
+	if (!*cmd)
+		ft_putstr_fd("unsetenv: Too few arguments.\n", 2);
+	while (cmd[index])
+	{
+		unset_env(&sh->env, cmd[index]);
+		++index;
+	}
+}

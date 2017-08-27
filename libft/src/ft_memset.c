@@ -1,29 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_memset.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/12/15 02:19:11 by flevesqu          #+#    #+#             */
-/*   Updated: 2017/08/24 09:15:15 by flevesqu         ###   ########.fr       */
+/*   Created: 2015/11/24 17:50:32 by flevesqu          #+#    #+#             */
+/*   Updated: 2017/08/24 11:13:24 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
-# include "libft.h"
-# include <unistd.h>
-# include <stdlib.h>
-# define BUFF_SIZE 4096
+#include "libft.h"
 
-typedef struct	s_gnl
+void	*ft_memset(void *s, int c, size_t n)
 {
-	char			*str;
-	int				fd;
-	struct s_gnl	*next;
-}				t_gnl;
+	t_ulong			*s1;
+	unsigned char	*s2;
+	size_t			m;
+	t_ulong			dc;
 
-int				get_next_line(const int fd, char **line);
-
-#endif
+	s1 = s;
+	m = n >> 3;
+	s2 = (unsigned char*)&s1[m];
+	n &= 0x7;
+	dc = DUPC(c);
+	while (m--)
+		*(s1++) = dc;
+	while (n--)
+		*(s2++) = dc;
+	return (s);
+}

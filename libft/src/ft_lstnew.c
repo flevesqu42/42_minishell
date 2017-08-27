@@ -1,29 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_lstnew.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/12/15 02:19:11 by flevesqu          #+#    #+#             */
-/*   Updated: 2017/08/24 09:15:15 by flevesqu         ###   ########.fr       */
+/*   Created: 2017/06/01 03:48:22 by flevesqu          #+#    #+#             */
+/*   Updated: 2017/06/01 05:03:06 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
-# include "libft.h"
-# include <unistd.h>
-# include <stdlib.h>
-# define BUFF_SIZE 4096
+#include "libft.h"
 
-typedef struct	s_gnl
+t_list	*ft_lstpushnew(t_list **first, void *data)
 {
-	char			*str;
-	int				fd;
-	struct s_gnl	*next;
-}				t_gnl;
+	t_list	*new;
 
-int				get_next_line(const int fd, char **line);
+	new = (t_list*)malloc(sizeof(t_list));
+	new->data = data;
+	new->next = *first;
+	*first = new;
+	return (new);
+}
 
-#endif
+t_list	*ft_lstnew(void *data)
+{
+	t_list	*new;
+
+	new = (t_list*)malloc(sizeof(t_list));
+	new->data = data;
+	new->next = NULL;
+	return (new);
+}

@@ -1,26 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_dlstdelone.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: flevesqu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/11/23 09:58:57 by flevesqu          #+#    #+#             */
-/*   Updated: 2017/08/25 05:47:20 by flevesqu         ###   ########.fr       */
+/*   Created: 2015/11/28 05:05:47 by flevesqu          #+#    #+#             */
+/*   Updated: 2015/11/28 19:21:32 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
+#include <stdlib.h>
 
-int		main(int ac, char **av, char **env)
+void	ft_dlstdelone(t_dlist **alst, void (*del)(void *, size_t))
 {
-	t_sh	sh;
-
-	(void)ac;
-	(void)av;
-	DEBUG_INIT();
-	DEBUG("Debug tty here:\n");
-	init_shell(&sh, env);
-	shell_loop(&sh);
-	return (0);
+	if (alst && *alst)
+	{
+		(*del)((*alst)->content, (*alst)->content_size);
+		free(*alst);
+		*alst = NULL;
+	}
 }

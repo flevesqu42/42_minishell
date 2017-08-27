@@ -65,7 +65,7 @@ int				pf_itoa(intmax_t i, t_flags *flags, int *ret);
 int				pf_utoa_base(size_t i, int base, t_flags *flags
 		, int *ret);
 size_t			ft_strlen(const char *str);
-char			*ft_strchar(size_t n, char c);
+char			*ft_strnewc(size_t n, char c);
 void			ft_putstr(const char *s);
 
 #endif

@@ -1,26 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_dlstiter.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: flevesqu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/11/23 09:58:57 by flevesqu          #+#    #+#             */
-/*   Updated: 2017/08/25 05:47:20 by flevesqu         ###   ########.fr       */
+/*   Created: 2015/11/28 21:31:07 by flevesqu          #+#    #+#             */
+/*   Updated: 2015/12/03 18:01:02 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-int		main(int ac, char **av, char **env)
+void	ft_dlstiter(t_dlist *lst, void (*f)(t_dlist *elem))
 {
-	t_sh	sh;
-
-	(void)ac;
-	(void)av;
-	DEBUG_INIT();
-	DEBUG("Debug tty here:\n");
-	init_shell(&sh, env);
-	shell_loop(&sh);
-	return (0);
+	if (f)
+	{
+		(*f)(lst);
+		if (lst->next)
+			ft_dlstiter(lst->next, f);
+	}
 }

@@ -1,29 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_memcpy.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/12/15 02:19:11 by flevesqu          #+#    #+#             */
-/*   Updated: 2017/08/24 09:15:15 by flevesqu         ###   ########.fr       */
+/*   Created: 2015/11/24 20:53:54 by flevesqu          #+#    #+#             */
+/*   Updated: 2017/07/31 04:49:02 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
-# include "libft.h"
-# include <unistd.h>
-# include <stdlib.h>
-# define BUFF_SIZE 4096
+#include "libft.h"
 
-typedef struct	s_gnl
+void	*ft_memcpy(void *dst, const void *src, size_t n)
 {
-	char			*str;
-	int				fd;
-	struct s_gnl	*next;
-}				t_gnl;
+	t_ulong			*d1;
+	t_ulong			*s1;
+	unsigned char	*s2;
+	unsigned char	*d2;
+	size_t			m;
 
-int				get_next_line(const int fd, char **line);
-
-#endif
+	m = n >> 3;
+	n &= 0x7;
+	s1 = (t_ulong*)src;
+	d1 = (t_ulong*)dst;
+	s2 = (unsigned char*)&s1[m];
+	d2 = (unsigned char*)&d1[m];
+	while (m--)
+		*(d1++) = *(s1++);
+	while (n--)
+		*(d2++) = *(s2++);
+	return (dst);
+}

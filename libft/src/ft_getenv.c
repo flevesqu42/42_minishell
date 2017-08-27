@@ -1,29 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_getenv.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/12/15 02:19:11 by flevesqu          #+#    #+#             */
-/*   Updated: 2017/08/24 09:15:15 by flevesqu         ###   ########.fr       */
+/*   Created: 2016/11/25 07:21:26 by flevesqu          #+#    #+#             */
+/*   Updated: 2016/12/15 08:52:34 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
-# include "libft.h"
-# include <unistd.h>
-# include <stdlib.h>
-# define BUFF_SIZE 4096
+#include "libft.h"
 
-typedef struct	s_gnl
+char	*ft_getenv(char **env, const char *toget)
 {
-	char			*str;
-	int				fd;
-	struct s_gnl	*next;
-}				t_gnl;
+	size_t	size[2];
 
-int				get_next_line(const int fd, char **line);
-
-#endif
+	if (!toget)
+		return (NULL);
+	size[0] = ft_strlen(toget);
+	while (*env)
+	{
+		if ((size[1] = ft_strchr(*env, '=') - *env) == size[0]
+				&& !ft_strncmp(toget, *env, size[1]))
+			return (ft_strchr(*env, '=') + 1);
+		env += 1;
+	}
+	return (NULL);
+}

@@ -1,26 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   get_path.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/11/23 09:58:57 by flevesqu          #+#    #+#             */
-/*   Updated: 2017/08/25 05:47:20 by flevesqu         ###   ########.fr       */
+/*   Created: 2017/07/21 03:19:30 by flevesqu          #+#    #+#             */
+/*   Updated: 2017/07/21 03:19:41 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int		main(int ac, char **av, char **env)
+int		get_path(char **env_path, char *path)
 {
-	t_sh	sh;
-
-	(void)ac;
-	(void)av;
-	DEBUG_INIT();
-	DEBUG("Debug tty here:\n");
-	init_shell(&sh, env);
-	shell_loop(&sh);
-	return (0);
+	if (!*env_path || !**env_path)
+		return (0);
+	if (ft_strchr(*env_path, ':'))
+	{
+		ft_strncpy(path, *env_path, ft_strchr(*env_path, ':') - *env_path);
+		path[ft_strchr(*env_path, ':') - *env_path] = '\0';
+		*env_path += ft_strlen(path) + 1;
+		return (1);
+	}
+	else
+	{
+		ft_strcpy(path, *env_path);
+		*env_path += ft_strlen(path);
+		return (1);
+	}
 }

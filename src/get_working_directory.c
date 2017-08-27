@@ -1,29 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   get_working_directory.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/12/15 02:19:11 by flevesqu          #+#    #+#             */
-/*   Updated: 2017/08/24 09:15:15 by flevesqu         ###   ########.fr       */
+/*   Created: 2017/07/26 08:42:52 by flevesqu          #+#    #+#             */
+/*   Updated: 2017/08/26 06:51:22 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
-# include "libft.h"
-# include <unistd.h>
-# include <stdlib.h>
-# define BUFF_SIZE 4096
+#include "minishell.h"
 
-typedef struct	s_gnl
+char	*get_working_directory(t_sh *sh)
 {
-	char			*str;
-	int				fd;
-	struct s_gnl	*next;
-}				t_gnl;
+	char	*wd;
 
-int				get_next_line(const int fd, char **line);
-
-#endif
+	if (!(wd = ft_getenv(sh->env, "PWD")))
+	{
+		getcwd(sh->buffer_path, PATH_MAX);
+		wd = sh->buffer_path;
+		push_to_env(&sh->env, "PWD", wd);
+	}
+	else
+		wd = ft_strcpy(sh->buffer_path, wd);
+	return (wd);
+}

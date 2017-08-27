@@ -1,29 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   line_treatment.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/12/15 02:19:11 by flevesqu          #+#    #+#             */
-/*   Updated: 2017/08/24 09:15:15 by flevesqu         ###   ########.fr       */
+/*   Created: 2017/01/26 07:56:42 by flevesqu          #+#    #+#             */
+/*   Updated: 2017/07/25 10:14:51 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
-# include "libft.h"
-# include <unistd.h>
-# include <stdlib.h>
-# define BUFF_SIZE 4096
+#include "minishell.h"
 
-typedef struct	s_gnl
+void	line_treatment(t_sh *sh, size_t index)
 {
-	char			*str;
-	int				fd;
-	struct s_gnl	*next;
-}				t_gnl;
+	char	*line;
 
-int				get_next_line(const int fd, char **line);
-
-#endif
+	sh->cmd[index] = NULL;
+	while (index--)
+		sh->cmd[index] += (unsigned long long)sh->line;
+	line = sh->cmd[0] ? sh->cmd[0] : sh->line;
+	while (*line)
+	{
+		if (*line == 1)
+			*line = '\0';
+		line += 1;
+	}
+	if (*sh->cmd)
+		do_command(sh, sh->cmd);
+}

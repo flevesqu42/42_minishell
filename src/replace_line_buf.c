@@ -1,29 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   replace_line_buf.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/12/15 02:19:11 by flevesqu          #+#    #+#             */
-/*   Updated: 2017/08/24 09:15:15 by flevesqu         ###   ########.fr       */
+/*   Created: 2017/07/19 00:56:08 by flevesqu          #+#    #+#             */
+/*   Updated: 2017/07/19 00:56:13 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
-# include "libft.h"
-# include <unistd.h>
-# include <stdlib.h>
-# define BUFF_SIZE 4096
+#include "minishell.h"
 
-typedef struct	s_gnl
+void		replace_line_buf(t_sh *sh, size_t size)
 {
-	char			*str;
-	int				fd;
-	struct s_gnl	*next;
-}				t_gnl;
+	char	*new;
 
-int				get_next_line(const int fd, char **line);
-
-#endif
+	if (size > sh->size)
+	{
+		sh->size = size;
+		if (!(new = ft_strnew(sizeof(char) * sh->size + 1)))
+			sh_error(MALLOC_ERROR, INTERNAL, sh->name);
+		ft_memcpy(new, sh->line, size);
+		free(sh->line);
+		sh->line = new;
+	}
+}

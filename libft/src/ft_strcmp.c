@@ -1,29 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/12/15 02:19:11 by flevesqu          #+#    #+#             */
-/*   Updated: 2017/08/24 09:15:15 by flevesqu         ###   ########.fr       */
+/*   Created: 2015/11/25 21:40:45 by flevesqu          #+#    #+#             */
+/*   Updated: 2017/08/25 08:30:08 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
-# include "libft.h"
-# include <unistd.h>
-# include <stdlib.h>
-# define BUFF_SIZE 4096
+#include "libft.h"
 
-typedef struct	s_gnl
+int	ft_strcmp_nocase(const char *s1, const char *s2)
 {
-	char			*str;
-	int				fd;
-	struct s_gnl	*next;
-}				t_gnl;
+	while (*s1)
+	{
+		if (ft_tolower(*s1) ^ ft_tolower(*s2))
+			return ((t_uchar)ft_tolower(*s1) - (t_uchar)ft_tolower(*s2));
+		++s1;
+		++s2;
+	}
+	return (ft_tolower(*s1) - ft_tolower(*s2));
+}
 
-int				get_next_line(const int fd, char **line);
-
-#endif
+int	ft_strcmp(const char *src1, const char *src2)
+{
+	return (ft_memcmp(src1, src2, ft_strlen(src1) + 1));
+}
