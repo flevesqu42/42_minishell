@@ -6,7 +6,7 @@
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/01/25 09:54:27 by flevesqu          #+#    #+#             */
-/*   Updated: 2017/08/27 11:00:36 by flevesqu         ###   ########.fr       */
+/*   Updated: 2017/08/28 04:29:51 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	shell_loop(t_sh *sh)
 {
 	sh->history = NULL;
 	if (!(sh->line = ft_strnew(sizeof(char) * sh->size + 1)))
-		sh_error(MALLOC_ERROR, INTERNAL, sh->name);
+		sh_error(MALLOC_ERROR, INTERNAL, sh);
 	while (42)
 	{
 		sh->history_ptr = sh->history;
@@ -26,8 +26,10 @@ void	shell_loop(t_sh *sh)
 		get_prompt(sh);
 		run_line_loop(sh);
 		if (!ft_isstrspaces(sh->line))
+		{
 			ft_blstpushnew(&sh->history, ft_strndup(sh->line
 				, ft_strlen(sh->line) - 1));
-		get_command_from_line(sh, sh->line);
+			get_command_from_line(sh, sh->line);
+		}
 	}
 }

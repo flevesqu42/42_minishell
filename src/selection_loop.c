@@ -6,7 +6,7 @@
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/26 04:23:02 by flevesqu          #+#    #+#             */
-/*   Updated: 2017/08/25 08:24:13 by flevesqu         ###   ########.fr       */
+/*   Updated: 2017/08/28 08:16:46 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ char		*selection_loop(t_select *s)
 	{
 		selection_display(s);
 		if ((ret = read(0, input, SELECT_BUFFER_SIZE)) < 0)
-			sh_error(READ_ERROR, INTERNAL, "minishell");
+			return (NULL);
 		input[ret] = '\0';
 		if (*input == 3 || *input == 127 || !ft_strcmp(input, KEY_ESC))
 			return (select_exit(s, NULL));

@@ -6,7 +6,7 @@
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/20 04:20:28 by flevesqu          #+#    #+#             */
-/*   Updated: 2017/08/27 06:50:52 by flevesqu         ###   ########.fr       */
+/*   Updated: 2017/08/28 08:25:03 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,15 @@ static void	change_directory_to(t_sh *sh, char *path, int flag
 
 	path = ft_strdup(path);
 	if (chdir(path) < 0)
-		cd_error(original_path);
+		cd_error(original_path, sh);
 	else
 	{
 		if ((pwd = ft_getenv(sh->env, "PWD")))
-			push_to_env(&sh->env, "OLDPWD", pwd);
+			push_to_env(&sh->env, "OLDPWD", pwd, sh);
 		if (flag)
-			push_to_env(&sh->env, "PWD", getcwd(sh->buffer_path, PATH_MAX));
+			push_to_env(&sh->env, "PWD", getcwd(sh->buffer_path, PATH_MAX), sh);
 		else
-			push_to_env(&sh->env, "PWD", path);
+			push_to_env(&sh->env, "PWD", path, sh);
 	}
 	free(path);
 }
@@ -37,7 +37,7 @@ static void	cd_to_envpath(t_sh *sh, char *key, int flag, char *original_path)
 	char	*path;
 
 	if (!(path = ft_getenv(sh->env, key)))
-		env_error(key, "cd", sh->name);
+		env_error(key, "cd", sh);
 	else
 		change_directory_to(sh, path, flag, original_path);
 }
@@ -67,9 +67,9 @@ void		builtin_cd(t_sh *sh, char **arg)
 	flag = 0;
 	while (*arg && **arg == '-' && (*arg)[1])
 	{
-		if (!ft_strcmp("--", *arg))
+		if (!ft_strcmp("--", *arg) && ++arg)
 			break ;
-		if ((flag |= parse_flags(*arg)) < 0)
+		if ((flag |= parse_flags(*arg)) < 0 && ft_utoabuf(1, sh->ret))
 			return ;
 		++arg;
 	}

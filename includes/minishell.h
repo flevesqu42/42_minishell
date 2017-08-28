@@ -6,7 +6,7 @@
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/23 09:57:45 by flevesqu          #+#    #+#             */
-/*   Updated: 2017/08/27 07:19:08 by flevesqu         ###   ########.fr       */
+/*   Updated: 2017/08/28 08:35:52 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,19 +119,17 @@ typedef struct	s_select
 
 enum	e_error
 {
-	CMD_NOT_FOUND		,
-	CMD_TOO_LONG		,
-	READ_ERROR			,
-	CD_ERROR			,
 	FORK_ERROR			,
-	NO_FILE				,
-	NO_RIGHT			,
-	MALLOC_ERROR		,
-	ALNUM_ERROR			,
-	FIRST_LETTER_ERROR	,
-	IS_A_DIRECTORY		,
-	GETATTR_ERROR		,
 	SETATTR_ERROR		,
+	FIRST_LETTER_ERROR	,
+	ALNUM_ERROR			,
+	NO_FILE				,
+	IS_A_DIRECTORY		,
+	NO_RIGHT			,
+	READ_ERROR			,
+	GETATTR_ERROR		,
+	MALLOC_ERROR		,
+	CMD_NOT_FOUND		,
 	TOO_MUCH_ARG		,
 };
 
@@ -192,9 +190,9 @@ void			get_cursor_pos(int *cursor);
 void			move_cursor_to(int *cursor);
 void			cursor_offset(t_sh *sh, int x);
 
-void			sh_error(int err, char *command, char *sh);
-void			env_error(char *key, char *command, char *sh);
-void			cd_error(char *arg);
+void			sh_error(int err, char *command, t_sh *sh);
+void			env_error(char *key, char *command, t_sh *sh);
+void			cd_error(char *arg, t_sh *sh);
 void			display_sig_error(int stat, char *cmd, pid_t pid);
 
 void			input_readable(t_sh *sh, char *buf);
@@ -208,9 +206,9 @@ int				parse_chars(t_sh *sh, char **line, size_t *index);
 
 void			signal_handler(int i);
 
-void			push_to_env(char ***env, char *key, char *value);
+void			push_to_env(char ***env, char *key, char *value, t_sh *sh);
 void			display_env(char **env);
-void			new_env(char ***dst, char **src);
+void			new_env(char ***dst, char **src, t_sh *sh);
 void			unset_env(char ***env, char *to_unset);
 
 void			builtin_env(t_sh *sh, char **cmd);

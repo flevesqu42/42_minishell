@@ -17,11 +17,11 @@ void	is_an_exec(t_sh *sh, char **cmd, char *path)
 	struct stat	infos;
 
 	if (lstat(path, &infos) < 0)
-		sh_error(NO_FILE, *cmd, sh->name);
+		sh_error(NO_FILE, *cmd, sh);
 	else if ((infos.st_mode & S_IFDIR))
-		sh_error(IS_A_DIRECTORY, *cmd, sh->name);
+		sh_error(IS_A_DIRECTORY, *cmd, sh);
 	else if (!(infos.st_mode & S_IXUSR))
-		sh_error(NO_RIGHT, *cmd, sh->name);
+		sh_error(NO_RIGHT, *cmd, sh);
 	else
 		execute_command(sh, cmd, path);
 }

@@ -6,7 +6,7 @@
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/25 10:34:00 by flevesqu          #+#    #+#             */
-/*   Updated: 2017/07/25 10:55:06 by flevesqu         ###   ########.fr       */
+/*   Updated: 2017/08/28 04:29:26 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	builtin_env_post(char **cmd, t_sh *sh)
 	while (*cmd && **cmd != '=' && (tmp = ft_strchr(*cmd, '=')))
 	{
 		*tmp = '\0';
-		push_to_env(&sh->env, *cmd, tmp + 1);
+		push_to_env(&sh->env, *cmd, tmp + 1, sh);
 		cmd += 1;
 	}
 	if (*cmd)
@@ -96,7 +96,7 @@ void	builtin_env(t_sh *sh, char **cmd)
 	if (!ft_strcmp(sh->name, "env"))
 		builtin_env_bis(sh, cmd + 1);
 	if ((pid = fork()) < 0)
-		sh_error(FORK_ERROR, *cmd, sh->name);
+		sh_error(FORK_ERROR, *cmd, sh);
 	else if (pid == 0)
 		builtin_env_bis(sh, cmd + 1);
 	else
@@ -109,6 +109,6 @@ void	builtin_env(t_sh *sh, char **cmd)
 			check_signal_status(stat, *cmd, pid);
 		}
 		if (tcsetattr(0, TCSANOW, &sh->old_terms) < 0)
-			sh_error(SETATTR_ERROR, INTERNAL, sh->name);
+			sh_error(SETATTR_ERROR, INTERNAL, sh);
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/20 04:10:27 by flevesqu          #+#    #+#             */
-/*   Updated: 2017/08/07 08:55:53 by flevesqu         ###   ########.fr       */
+/*   Updated: 2017/08/28 04:43:05 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,14 @@ void	builtin_setenv(t_sh *sh, char **cmd)
 	else if (cmd[1] && cmd[2] && cmd[3])
 		ft_putstr_fd("setenv: Too many arguments.\n", 2);
 	else if (!ft_isalpha(*cmd[1]) && *cmd[1] != '_')
-		sh_error(FIRST_LETTER_ERROR, "setenv", sh->name);
+		sh_error(FIRST_LETTER_ERROR, "setenv", sh);
 	else
 	{
 		while (ft_isalnum(cmd[1][index]) || cmd[1][index] == '_')
 			++index;
 		if (cmd[1][index])
-			sh_error(ALNUM_ERROR, "setenv", sh->name);
+			sh_error(ALNUM_ERROR, "setenv", sh);
 		else
-			push_to_env(&sh->env, cmd[1], cmd[2]);
+			push_to_env(&sh->env, cmd[1], cmd[2], sh);
 	}
 }

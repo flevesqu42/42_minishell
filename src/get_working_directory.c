@@ -20,7 +20,7 @@ char	*get_working_directory(t_sh *sh)
 	{
 		getcwd(sh->buffer_path, PATH_MAX);
 		wd = sh->buffer_path;
-		push_to_env(&sh->env, "PWD", wd);
+		push_to_env(&sh->env, "PWD", wd, sh);
 	}
 	else
 		wd = ft_strcpy(sh->buffer_path, wd);

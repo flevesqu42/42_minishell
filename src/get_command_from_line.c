@@ -6,7 +6,7 @@
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/19 06:03:55 by flevesqu          #+#    #+#             */
-/*   Updated: 2017/08/26 02:31:06 by flevesqu         ###   ########.fr       */
+/*   Updated: 2017/08/28 04:29:26 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ static int	set_tilde(t_sh *sh, char *line)
 		replace_sequence(sh, &line, 1, home);
 	else
 	{
-		env_error("HOME", INTERNAL, sh->name);
+		env_error("HOME", INTERNAL, sh);
 		return (1);
 	}
 	return (0);
@@ -58,7 +58,7 @@ static void	split_arguments(t_sh *sh, char *line)
 	while (*line)
 	{
 		if (index >= ARG_MAX)
-			sh_error(TOO_MUCH_ARG, INTERNAL, sh->name);
+			sh_error(TOO_MUCH_ARG, INTERNAL, sh);
 		if (!(sh->flags & QUOTES))
 			erase_spaces(&line);
 		if (!*line)

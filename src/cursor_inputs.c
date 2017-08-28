@@ -52,7 +52,7 @@ void		cursor_inputs(t_sh *sh, char *buf)
 	int	ret;
 
 	if ((ret = read(0, buf + 1, 7)) < 0)
-		sh_error(READ_ERROR, INTERNAL, sh->name);
+		sh_error(READ_ERROR, INTERNAL, sh);
 	buf[ret + 1] = '\0';
 	if (!ft_strcmp(buf, KEY_LEFT) && sh->index && sh->index > sh->last_newline)
 		cursor_move_index(sh, -1);

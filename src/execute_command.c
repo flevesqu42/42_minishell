@@ -6,7 +6,7 @@
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/21 06:16:08 by flevesqu          #+#    #+#             */
-/*   Updated: 2017/07/25 10:55:06 by flevesqu         ###   ########.fr       */
+/*   Updated: 2017/08/28 04:29:26 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,14 @@ void	execute_command(t_sh *sh, char **cmd, char *path)
 	pid_t	pid;
 	int		stat;
 
-	push_to_env(&sh->env, "_", path);
+	push_to_env(&sh->env, "_", path, sh);
 	if (!ft_strcmp(sh->name, "env"))
 	{
 		execve(path, cmd, sh->env);
 		return ;
 	}
 	if ((pid = fork()) < 0)
-		sh_error(FORK_ERROR, *cmd, sh->name);
+		sh_error(FORK_ERROR, *cmd, sh);
 	else if (pid == 0)
 		execve(path, cmd, sh->env);
 	else
@@ -37,6 +37,6 @@ void	execute_command(t_sh *sh, char **cmd, char *path)
 			check_signal_status(stat, *cmd, pid);
 		}
 		if (tcsetattr(0, TCSANOW, &sh->old_terms) < 0)
-			sh_error(SETATTR_ERROR, INTERNAL, sh->name);
+			sh_error(SETATTR_ERROR, INTERNAL, sh);
 	}
 }

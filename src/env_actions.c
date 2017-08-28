@@ -6,13 +6,13 @@
 /*   By: flevesqu <flevesqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/05 21:14:50 by flevesqu          #+#    #+#             */
-/*   Updated: 2017/08/27 04:01:56 by flevesqu         ###   ########.fr       */
+/*   Updated: 2017/08/28 08:26:27 by flevesqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	push_to_env(char ***env, char *key, char *value)
+void	push_to_env(char ***env, char *key, char *value, t_sh *sh)
 {
 	size_t	i;
 	size_t	size[2];
@@ -27,10 +27,10 @@ void	push_to_env(char ***env, char *key, char *value)
 	if ((*env)[i])
 		ft_strdel(&(*env)[i]);
 	else
-		new_env(&(*env), (*env));
+		new_env(&(*env), (*env), sh);
 	if (!((*env)[i] = (char*)malloc(sizeof(char)
 		* (ft_strlen(value) + ft_strlen(key) + 2))))
-		sh_error(MALLOC_ERROR, INTERNAL, "minishell");
+		sh_error(MALLOC_ERROR, INTERNAL, sh);
 	ft_strcpy((*env)[i], key);
 	ft_strcat((*env)[i], "=");
 	ft_strcat((*env)[i], value);
@@ -45,7 +45,7 @@ void	display_env(char **env)
 	}
 }
 
-void	new_env(char ***dst, char **src)
+void	new_env(char ***dst, char **src, t_sh *sh)
 {
 	size_t	size;
 	char	**new;
@@ -54,7 +54,7 @@ void	new_env(char ***dst, char **src)
 	while (src[size])
 		++size;
 	if (!(new = (char**)malloc(sizeof(char*) * (size + 2))))
-		sh_error(MALLOC_ERROR, INTERNAL, "minishell");
+		sh_error(MALLOC_ERROR, INTERNAL, sh);
 	size = 0;
 	while (src[size])
 	{

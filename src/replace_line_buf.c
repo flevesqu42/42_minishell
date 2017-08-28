@@ -20,7 +20,7 @@ void		replace_line_buf(t_sh *sh, size_t size)
 	{
 		sh->size = size;
 		if (!(new = ft_strnew(sizeof(char) * sh->size + 1)))
-			sh_error(MALLOC_ERROR, INTERNAL, sh->name);
+			sh_error(MALLOC_ERROR, INTERNAL, sh);
 		ft_memcpy(new, sh->line, size);
 		free(sh->line);
 		sh->line = new;
